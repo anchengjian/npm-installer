@@ -66,7 +66,7 @@ function cb(error) {
 
 function fileExistsAndAvailable(filepath) {
   try {
-    return fileExists(parsedUrl.path);
+    return fileExists(filepath);
   } catch(err) {
     return false;
   }
@@ -85,11 +85,13 @@ var progress = 0;
 var parsedUrl = urlModule.parse(url);
 var decompressOptions = { strip: 1, mode: '755' };
 if( parsedUrl.protocol == 'file:' ) {
-  if ( !fileExistsAndAvailable(parsedUrl.path) ) {
+  var filePath = require('path').resolve(url.slice(7));
+  
+  if ( !fileExistsAndAvailable(filePath) ) {
     logError('Could not find ' + parsedUrl.path);
   }
   new Decompress()
-    .src( parsedUrl.path )
+    .src( filePath )
     .dest( dest )
     .use( Decompress.zip(decompressOptions) )
     .use( Decompress.targz(decompressOptions) )
